@@ -1,0 +1,14 @@
+.section init
+
+
+.section text
+    main:
+        push r1 on stack r2
+        output "Testing\n"
+        pop r5 off stack r2 
+        r1 := 0
+        goto r5
+
+.section data
+
+.section rodata

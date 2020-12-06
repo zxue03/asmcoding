@@ -1,0 +1,5 @@
+.section init
+    start:
+        goto main linking r1
+        halt 
+
