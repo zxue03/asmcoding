@@ -1,0 +1,23 @@
+.section init
+  .temps r6, r7
+  .zero r0
+  r0 := 0
+  if (r0 == 0) goto print_number
+  return_address:
+    halt
+
+.section rodata
+  mystr: .space 14
+
+.section text
+  print_number:
+      output "Printing number: "
+      r5 := 36
+      r4 := r5 / 10
+      r4 := r4 + 48
+      output r4
+      r4 := r5 mod 10
+      r4 := r4 + 48
+      output r4
+      output '\n'
+      goto return_address

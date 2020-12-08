@@ -1,11 +1,11 @@
 .section init
     .zero r0
     .temps r6, r7
-    
+
 .section data
     .space 10000
-    endstack: 
+    endstack:
 
-.section init 
+.section init
     r0 := 0
     r2 := endstack
