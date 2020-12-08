@@ -5,3 +5,30 @@
 
 .section text
     printd:
+        push r1 on stack r2
+        push r4 on stack r2
+        push r3 on stack r2
+        r3 := m[r0][r2 + 3]
+
+        r5 := r3 / 10
+        if (r5 == 0) goto base_case
+
+        // recursive call
+        push r5 on stack r2
+        goto printd linking r1
+        goto finish_printd
+        pop stack r2
+        r4 := r3 mod 10
+        push r4 on stack r2
+        goto printd linking r1
+        goto finish_printd
+
+    base_case:
+        output r3 + 48
+
+    finish_printd:
+      pop r3 off stack r2
+      pop r4 off stack r2
+      pop r5 off stack r2
+      pop stack r2
+      goto r5
