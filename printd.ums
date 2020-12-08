@@ -1,5 +1,5 @@
 .section init
-    .temps r6, r7
+    .temps r6, r7, r4
     .zero r0
     r0 := 0
 
@@ -10,18 +10,24 @@
         push r3 on stack r2
         r3 := m[r0][r2 + 3]
 
-        r5 := r3 / 10
-        if (r5 == 0) goto base_case
+        r1 := finish_handle_negative
+        if( r3 <s r0 ) goto handle_negative
 
-        // recursive call
-        push r5 on stack r2
-        goto printd linking r1
-        goto finish_printd
-        pop stack r2
-        r4 := r3 mod 10
-        push r4 on stack r2
-        goto printd linking r1
-        goto finish_printd
+        finish_handle_negative:
+          r5 := r3 / 10
+
+          if (r5 == 0) goto base_case
+
+          // recursive call
+          push r5 on stack r2
+          goto printd linking r1
+          pop stack r2
+          r5 := r3 mod 10
+          push r5 on stack r2
+          goto printd linking r1
+          pop stack r2
+          goto finish_printd
+
 
     base_case:
         output r3 + 48
@@ -30,5 +36,10 @@
       pop r3 off stack r2
       pop r4 off stack r2
       pop r5 off stack r2
-      pop stack r2
       goto r5
+
+    handle_negative:
+      output '-'
+      if(r3 >s r0) goto r1
+      r3 := -r3
+      goto r1

@@ -6,9 +6,11 @@
 .section text
     main:
         push r1 on stack r2
-        r3 := 36
+        r3 := 2147483648
+        r3 := -r3
         push r3 on stack r2
         goto printd linking r1
+        output '\n'
         pop stack r2
         pop r5 off stack r2
         r1 := 0
