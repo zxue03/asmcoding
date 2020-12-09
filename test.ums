@@ -1,8 +1,9 @@
 .section init
   .temps r6, r7
   .zero r0
-  r0 := 0
-  r4 := 1
-  r4 := -r4
+
+  r3 := input()
+  r3 := -r3
+  output r3 + 48
 
   halt

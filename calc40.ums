@@ -2,20 +2,123 @@
     .temps r6, r7
     .zero r0
     r0 := 0
+    r3 := value_stack
+    r5 := 0
+    initialize_jump_table:
+      r4 := jump_table
+      r4 := r4 + r5
+      m[r0][r4] := input_error
+      r5 := r5 + 1
+      if( r5 <s 256) goto initialize_jump_table using r4
+      r5 := 48
+    overwrite_digit_entry:
+      r4 := jump_table + r5
+      m[r0][r4] := digit
+      r5 := r5 + 1
+      if( r5 <s 58) goto overwrite_digit_entry using r4
+    command_entry:
+      m[r0][jump_table + ' '] := waiting
+      m[r0][jump_table + '\n'] := newline
+      m[r0][jump_table + '+'] := plus
+      m[r0][jump_table + '-'] := sub
+      m[r0][jump_table + '*'] := mul
+      m[r0][jump_table + '/'] := div
+      m[r0][jump_table + '|'] := or
+      m[r0][jump_table + '&'] := and
+      m[r0][jump_table + 'c'] := change_sign
+      m[r0][jump_table + '~'] := not
+      m[r0][jump_table + 's'] := swap
+      m[r0][jump_table + 'd'] := dup
+      m[r0][jump_table + 'p'] := pop_discard
+      m[r0][jump_table + 'z'] := zero_stack
 
 .section text
     main:
-        push r1 on stack r2
-        r3 := 2147483648
-        r3 := -r3
-        push r3 on stack r2
-        goto printd linking r1
-        output '\n'
-        pop stack r2
-        pop r5 off stack r2
-        r1 := 0
-        goto r5
+      push r1 on stack r2
+      push r4 on stack r2
+      push r3 on stack r2
+      goto waiting linking r1
+      halt
+      pop r3 off stack r2
+      pop r4 off stack r2
+      pop r5 off stack r2
+      r1 := 0
+      goto r5
+    waiting:
+      r4 := input()
+    waiting_with_character:
+      if( r4 == -1) goto r1 using r5
+      r5 := jump_table + r4
+      r5 := m[r0][r5]
+      goto r5
+    input_error:
+      output "Unknown character '"
+      output r4
+      output "'\n"
+      goto waiting
+    digit:
+      r4 := r4 - 48
+      push r4 on stack r3
+    entering:
+      r4 := input()
+      if( r4 >s 57) goto waiting_with_character using r5
+      if( r4 <s 48) goto waiting_with_character using r5
+      pop r5 off stack r3
+      r5 := 10 * r5
+      r4 := r4 - 48
+      r4 := r5 + r4
+      push r4 on stack r3
+      goto waiting
+    print_stack:
+      push r1 on stack r2
+      push r4 on stack r2
+      push m[r0][r3] on stack r2
+      output ">>> "
+      goto printd linking r1
+      output '\n'
+      pop stack r2
+      pop r1 off stack r2
+      pop r4 off stack r2
+      r3 := r3 + 1
+      goto print_loop
+    newline:
+      push r3 on stack r2
+      print_loop:
+        if(r3 <s value_stack) goto print_stack using r5
+        pop r3 off stack r2
+        goto waiting
+    plus:
+      push r4 on stack r2
+      pop r5 off stack r3
+      pop r4 off stack r3
+      r5 := r5 + r4
+      push r5 on stack r3
+      pop r4 off stack r2
+      goto waiting
+    sub:
+    mul:
+    div:
+    or:
+    and:
+    change_sign:
+    not:
+    swap:
+    dup:
+    pop_discard:
+      if( r3 == value_stack) goto waiting using r5
+      pop stack r3
+      goto waiting
+    zero_helper:
+      pop stack r3
+    zero_stack:
+      if( r3 != value_stack) goto zero_helper using r5
+      goto waiting
+
 
 .section data
+    .space 15000
+    value_stack:
 
 .section rodata
+    jump_table:
+    .space 256
