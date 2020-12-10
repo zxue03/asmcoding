@@ -146,7 +146,7 @@
       finish:
         push r5 on stack r3
         pop r4 off stack r2
-        pop r1 off stack r1
+        pop r1 off stack r2
         goto waiting
       div_0_error:
         output "Division by zero\n"
