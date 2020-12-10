@@ -68,7 +68,7 @@
       r4 := r4 - 48
       r4 := r5 + r4
       push r4 on stack r3
-      goto waiting
+      goto entering
     print_stack:
       push r1 on stack r2
       push r4 on stack r2
