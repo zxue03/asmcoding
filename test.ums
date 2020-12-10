@@ -1,9 +1,10 @@
 .section init
   .temps r6, r7
   .zero r0
-
-  r3 := input()
-  r3 := -r3
-  output r3 + 48
+  r5 := 49
+  r3 := 0
+  if (r3 == 0) goto finish using r5
+  finish:
+    output r5
 
   halt

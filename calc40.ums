@@ -88,6 +88,7 @@
         pop r3 off stack r2
         goto waiting
     plus:
+      if (r3 >=s value_stack - 1) goto two_elements_error using r5
       push r4 on stack r2
       pop r5 off stack r3
       pop r4 off stack r3
@@ -96,6 +97,7 @@
       pop r4 off stack r2
       goto waiting
     sub:
+      if (r3 >=s value_stack - 1) goto two_elements_error using r5
       push r4 on stack r2
       pop r5 off stack r3
       pop r4 off stack r3
@@ -104,6 +106,7 @@
       pop r4 off stack r2
       goto waiting
     mul:
+      if (r3 >=s value_stack - 1) goto two_elements_error using r5
       push r4 on stack r2
       pop r5 off stack r3
       pop r4 off stack r3
@@ -112,26 +115,60 @@
       pop r4 off stack r2
       goto waiting
     div:
+      if (r3 >=s value_stack - 1) goto two_elements_error using r5
+      push r1 on stack r2
       push r4 on stack r2
       pop r5 off stack r3
       pop r4 off stack r3
-      if (r5 == 0) goto div_0_error
-      r5 := r4 / r5
-      push r5 on stack r3
-      pop r4 off stack r2
-      goto waiting
-    div_0_error:
-      output "Division by zero"
-      output '\n'
-      push r4 on stack r3
-      push r5 on stack r3
-      pop r4 off stack r2
-      goto waiting
+      if (r4 >s 0) goto second_negative_check using r1
+      r4 := -r4
+      second_negative_check:
+        r5 := -r5
+      finish_div:
+        if (r5 == 0) goto div_0_error
+        r5 := r4 / r5
+        push r5 on stack r3
+        pop r4 off stack r2
+        pop r1 off stack r1
+        goto waiting
+      div_0_error:
+        output "Division by zero\n"
+        push r4 on stack r3
+        push r5 on stack r3
+        pop r4 off stack r2
+        goto waiting
     or:
+      if (r3 >=s value_stack - 1) goto two_elements_error using r5
+      push r4 on stack r2
+      pop r5 off stack r3
+      pop r4 off stack r3
+      r5 := r4 | r5
+      push r5 on stack r3
+      pop r4 off stack r2
+      goto waiting
     and:
+      if (r3 >=s value_stack - 1) goto two_elements_error using r5
+      push r4 on stack r2
+      pop r5 off stack r3
+      pop r4 off stack r3
+      r5 := r4 & r5
+      push r5 on stack r3
+      pop r4 off stack r2
+      goto waiting
     change_sign:
+      if (r3 == value_stack) goto empty_stack_error using r5
+      pop r5 off stack r3
+      r5 := -r5
+      push r5 on stack r3
+      goto waiting
     not:
+      if (r3 == value_stack) goto empty_stack_error using r5
+      pop r5 off stack r3
+      r5 := ~r5
+      push r5 on stack r3
+      goto waiting
     swap:
+      if (r3 >=s value_stack - 1) goto two_elements_error using r5
       push r4 on stack r2
       pop r5 off stack r3
       pop r4 off stack r3
@@ -140,16 +177,25 @@
       pop r4 off stack r2
       goto waiting
     dup:
+      if (r3 == value_stack) goto empty_stack_error using r5
+      pop r5 off stack r3
+      push r5 on stack r3
+      push r5 on stack r3
+      goto waiting
     pop_discard:
+      if (r3 == value_stack) goto empty_stack_error using r5
+      pop stack r3
+      goto waiting
+    zero_stack:
       if( r3 == value_stack) goto waiting using r5
       pop stack r3
+      goto zero_stack
+    empty_stack_error:
+      output "Stack underflow---expected at least 1 element\n"
       goto waiting
-    zero_helper:
-      pop stack r3
-    zero_stack:
-      if( r3 != value_stack) goto zero_helper using r5
+    two_elements_error:
+      output "Stack underflow---expected at least 2 elements\n"
       goto waiting
-
 
 .section data
     .space 15000
