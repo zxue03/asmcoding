@@ -132,6 +132,13 @@
     change_sign:
     not:
     swap:
+      push r4 on stack r2
+      pop r5 off stack r3
+      pop r4 off stack r3
+      push r5 on stack r3
+      push r4 on stack r3
+      pop r4 off stack r2
+      goto waiting
     dup:
     pop_discard:
       if( r3 == value_stack) goto waiting using r5
