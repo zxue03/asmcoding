@@ -96,8 +96,37 @@
       pop r4 off stack r2
       goto waiting
     sub:
+      push r4 on stack r2
+      pop r5 off stack r3
+      pop r4 off stack r3
+      r5 := r4 - r5
+      push r5 on stack r3
+      pop r4 off stack r2
+      goto waiting
     mul:
+      push r4 on stack r2
+      pop r5 off stack r3
+      pop r4 off stack r3
+      r5 := r4 * r5 // Tested 6 4 * and print 24H
+      push r5 on stack r3
+      pop r4 off stack r2
+      goto waiting
     div:
+      push r4 on stack r2
+      pop r5 off stack r3
+      pop r4 off stack r3
+      if (r5 == 0) goto div_0_error
+      r5 := r4 / r5
+      push r5 on stack r3
+      pop r4 off stack r2
+      goto waiting
+    div_0_error:
+      output "Division by zero"
+      output '\n'
+      push r4 on stack r3
+      push r5 on stack r3
+      pop r4 off stack r2
+      goto waiting
     or:
     and:
     change_sign:
