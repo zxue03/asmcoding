@@ -120,13 +120,30 @@
       push r4 on stack r2
       pop r5 off stack r3
       pop r4 off stack r3
-      if (r4 >s 0) goto second_negative_check using r1
-      r4 := -r4
-      second_negative_check:
+      if (r5 == 0) goto div_0_error
+      if (r4 <s 0) goto first_negative using r1
+      if (r5 <s 0) goto second_negative using r1
+      goto pos_pos_result
+      first_negative:
+        r4 := -r4
+        if (r5 >s 0) goto negative_result using r1
+        if (r5 <s 0) goto neg_neg_result using r1
+      second_negative:
         r5 := -r5
-      finish_div:
-        if (r5 == 0) goto div_0_error
+        if (r4 >s 0) goto negative_result using r1
+        if (r4 <s 0) goto neg_neg_result using r1
+      negative_result:
         r5 := r4 / r5
+        r5 := -r5
+        goto finish
+      neg_neg_result:
+        r5 := -r5
+        r5 := r4 / r5
+        goto finish
+      pos_pos_result:
+        r5 := r4 / r5
+        goto finish
+      finish:
         push r5 on stack r3
         pop r4 off stack r2
         pop r1 off stack r1
