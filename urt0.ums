@@ -1,11 +1,37 @@
+#
+#
+#  urt0.ums
+#
+#  Assignment: asmcoding
+#  Authors:    Victoria Chen and Zhicheng Xue
+#  Date:       12/11/2020
+#  Purpose:    This file contains code to allocate space for the call stack
+#              initialize necessary registers. The call stack is made of
+#              contiguous words in segment 0. It is primarily used for pushing
+#              and popping parameters of procedures/functions;
+#              it's also used for preserving values for some registers and
+#              local variables.
+#
+
+#  Calling conventions:
+#    Return address in r1
+#    Stack pointer in r2
+#    r6 and r7 are temp registers
+#    Nonvolatiles r0, r3, r4
+#    r0 is zero
+
+
+# sets up r0 and temp registers
 .section init
     .zero r0
     .temps r6, r7
 
+# Allocates space for the call stack
 .section data
-    .space 10000
+    .space 1000000
     endstack:
 
+# sets up the calling conventions and has r2 become the call stack pointer
 .section init
     r0 := 0
     r2 := endstack

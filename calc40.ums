@@ -1,9 +1,37 @@
+#
+#  calc40.ums
+#
+#  Assignment: asmcoding
+#  Authors:    Victoria Chen and Zhicheng Xue
+#  Date:       12/11/2020
+#  Purpose:    Implemented the RPN calculator, which can execute corresponding
+#              .um files. Responsible for reading UM instructions from
+#              specified input files. Possible operation include push value on
+#              the stack, traditional arithmetic bitwise OR and AND, change
+#              sign, bitwise negation, swap two numbers, duplicate, pop,
+#              clear the value stack, and print content of the value stack.
+
+#  Calling conventions:
+#    Return address in r1
+#    Stack pointer in r2
+#    r6 and r7 are temp registers
+#    Nonvolatiles r0
+#    r3 is the value stack pointer
+#    r4 holds the new input value - for the most part
+#    r0 is zero
+
+
 .section init
     .temps r6, r7
     .zero r0
     r0 := 0
     r3 := value_stack
     r5 := 0
+
+    # Purpose:   Initialize the jump_table, populate the jump table, and
+    #            set each element with appropriate label
+    # Arguments: takes no arguments
+    # Return:    this is a void procedure
     initialize_jump_table:
       r4 := jump_table
       r4 := r4 + r5
@@ -11,11 +39,20 @@
       r5 := r5 + 1
       if( r5 <s 256) goto initialize_jump_table using r4
       r5 := 48
+
+    # Purpose:   Set each element in the jump table to point to the digit label.
+    # Arguments: takes no arguments
+    # Return:    this is a void procedure
     overwrite_digit_entry:
       r4 := jump_table + r5
       m[r0][r4] := digit
       r5 := r5 + 1
       if( r5 <s 58) goto overwrite_digit_entry using r4
+
+    # Purpose:   Initialize the  Takes in the inputs
+    #            from the users and execute the operations.
+    # Arguments:
+    # Return:    this is a void procedure
     command_entry:
       m[r0][jump_table + ' '] := waiting
       m[r0][jump_table + '\n'] := newline
@@ -38,7 +75,6 @@
       push r4 on stack r2
       push r3 on stack r2
       goto waiting linking r1
-      halt
       pop r3 off stack r2
       pop r4 off stack r2
       pop r5 off stack r2
@@ -214,10 +250,13 @@
       output "Stack underflow---expected at least 2 elements\n"
       goto waiting
 
+# Allocates space for the value_stack
 .section data
-    .space 15000
+    .space 1500000
     value_stack:
 
+# Allocates space for the jump table, which directs the process to
+# different functions based on inputs
 .section rodata
     jump_table:
     .space 256

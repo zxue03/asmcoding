@@ -1,3 +1,22 @@
+#
+#  callmain.ums
+#
+#  Assignment: asmcoding
+#  Authors:    Victoria Chen and Zhicheng Xue
+#  Date:       12/11/2020
+#  Purpose:    This file contains a function that makes a initial call to main.
+#
+
+
+#  Calling conventions:
+#    Return address in r1
+#    Stack pointer in r2
+#    r6 and r7 are temp registers
+#    Nonvolatiles r0, r3, r4
+#    r0 is zero
+
+# Purpose: calls the main function, uses r1 to store the return address,
+#          then halts the program.
 .section init
         .temps r6, r7
         .zero r0

@@ -1,45 +1,69 @@
-.section init
+#
+#  printd.ums
+#
+#  Assignment: asmcoding
+#  Authors:    Victoria Chen and Zhicheng Xue
+#  Date:       12/11/2020
+#  Purpose:    This file contains a function that prints Universal Machine
+#              words in decimal. The caller of the printd function should pass
+#              the value of a register as an parameter.
+#
+
+#  Calling conventions:
+#    Return address in r1
+#    Stack pointer in r2
+#    r6, r7, and r4 are temp registers
+#    Nonvolatiles r0, r3
+#    r0 is zero
+
+.section init           // tells the umasm some register rules that we follow
     .temps r6, r7, r4
     .zero r0
     r0 := 0
 
 .section text
+    # Purpose:  Prints the UM word parameter in decimal recursively.
+    # Arguments: the number to print, uses r3 to store
+    # Return:   this is a void procedure
     printd:
         push r1 on stack r2
         push r4 on stack r2
         push r3 on stack r2
-        r3 := m[r0][r2 + 3]
+        r3 := m[r0][r2 + 3]   // r3 stores the argument - the number to print
 
-        r1 := finish_handle_negative
+        r1 := processing_digit
         if( r3 <s r0 ) goto handle_negative
 
-        finish_handle_negative:
+        # Retrieves the number that consists of the first n-1 digits,
+        # retrieves the last digit, calls printd on both recursively
+        processing_digit:
           r5 := r3 / 10
+          if (r5 == 0) goto base_case   // only it's one-digit - base case
 
-          if (r5 == 0) goto base_case
-
-          // recursive call
           push r5 on stack r2
           goto printd linking r1
-          pop stack r2
-          r5 := r3 mod 10
+          pop stack r2            // gets rid of the old parameter
+          r5 := r3 mod 10         // r5 holds the last one digit
           push r5 on stack r2
           goto printd linking r1
-          pop stack r2
-          goto finish_printd
+          pop stack r2            // gets rid of the old parameter
+          goto finish_printd     
 
-
+    # output a one-digit number in decimal
     base_case:
         output r3 + 48
 
+    # Reaches the end of a recurrence, restore r3, r4 and goes back to caller
     finish_printd:
       pop r3 off stack r2
       pop r4 off stack r2
       pop r5 off stack r2
       goto r5
 
+    # A negative number, prints a negative sign most negative,
+    # flips sign, and goes back to print it as if it's positive
     handle_negative:
       output '-'
-      if(r3 >s r0) goto r1
+      if(r3 >s r0) goto r1   // most negative, positive counterpart doesn't fit
       r3 := -r3
       goto r1
