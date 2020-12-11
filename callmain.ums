@@ -4,9 +4,9 @@
 #  Assignment: asmcoding
 #  Authors:    Victoria Chen and Zhicheng Xue
 #  Date:       12/11/2020
-#  Purpose:    This file contains a function that makes a initial call to main.
+#  Purpose:    This file contains a function that makes a initial call to the
+#              main function.
 #
-
 
 #  Calling conventions:
 #    Return address in r1
